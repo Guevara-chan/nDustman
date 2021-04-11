@@ -1,6 +1,6 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 # nDustman junk sites URL generator v0.02   #
-# Developed in 20218 by Victoria A. Guevara #
+# Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, parsecfg, strutils, browsers, os, osproc, niup, niupext
 
