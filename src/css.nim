@@ -1,3 +1,8 @@
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+# nDustman's GUI Cascading Style Sheets       #
+# Developed in 20218 by Victoria A. Guevara   #
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+
 withPIhandle(dlg):
     "TITLE"         "nDustman v0.02"
     "MARGIN"        "5x5"
