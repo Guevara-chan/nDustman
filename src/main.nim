@@ -2,7 +2,7 @@
 # nDustman junk sites URL generator v0.02   #
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
-import random, nativesockets, threadpool, parsecfg, strutils, browsers, os, osproc, niup, niupext
+import random, nativesockets, threadpool, parsecfg, strutils, sequtils, browsers, os, osproc, niup, niupext
 
 # Basic init.
 randomize()
@@ -17,11 +17,12 @@ proc cfget(key: string, def_val: string): string =
     cfg.setSectionKey "", key, result
 
 # Config parsing.
-let urlimit = (min: "min_url".cfget("6").parseInt, max: "max_url".cfget("6").parseInt)
-let domains = "domains".cfget(".com .org .net").split(' ')
+let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
+let domains  = "domains".cfget(".com .org .net").split(' ')
+let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toSeq().deduplicate()
 
 # Fiber body.
-proc finder(urlen: int, domain: string, output: PIhandle, pool = {'a'..'z'}) {.gcsafe.} =
+proc finder(urlen: int, domain: string, pool: seq[char], output: PIhandle) {.gcsafe.} =
     while true:
         var url = "www."
         for i in 1..urlen: url &= sample(pool)
@@ -37,18 +38,20 @@ proc finder(urlen: int, domain: string, output: PIhandle, pool = {'a'..'z'}) {.g
 
 # UI code.
 Open()
-let area      = Text(nil)
-let link      = Link("https://vk.com/guevara_chan", "Developed in 2021 by Guevara-chan") 
-let rand_btn  = FlatButton("GO RANDOM")
-let resp_btn  = FlatButton("{X}")
-let header    = Hbox(rand_btn, link, resp_btn, nil)
-let framer    = Vbox(area, nil)
-let cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains)
-let cfg_link  = Link(config_file.absolutePath, config_file)
-let footer    = Hbox(cfg_info, cfg_link, nil)
-let liner     = Vbox(header, Frame(framer), footer, nil)
-let dlg       = Dialog(liner)
-let formattag = User()
+let 
+    area      = Text(nil)
+    link      = Link("https://vk.com/guevara_chan", "Developed in 2021 by Guevara-chan") 
+    rand_btn  = FlatButton("GO RANDOM")
+    resp_btn  = FlatButton("{X}")
+    header    = Hbox(rand_btn, link, resp_btn, nil)
+    framer    = Vbox(area, nil)
+    cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nChartacter pool: " &
+        charpool.join(""))
+    cfg_link  = Link(config_file.absolutePath, config_file)
+    footer    = Hbox(cfg_info, cfg_link, nil)
+    liner     = Vbox(header, Frame(framer), footer, nil)
+    dlg       = Dialog(liner)
+    formattag = User()
 include       "./css.nim"
 
 # Callbacks setup and naming.
@@ -67,7 +70,7 @@ niup.SetCallback resp_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 cfg.writeConfig(config_file)
 for urlen in urlimit.min..urlimit.max:
     for domain in domains:
-        spawn finder(urlen, domain, area)
+        spawn finder(urlen, domain, charpool, area)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER
