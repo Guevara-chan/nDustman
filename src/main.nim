@@ -19,7 +19,7 @@ proc cfget(key: string, def_val: string): string =
 # Config parsing.
 let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
 let domains  = "domains".cfget(".com .org .net").split(' ')
-let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toSeq().deduplicate()
+let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
 
 # Fiber body.
 proc finder(urlen: int, domain: string, pool: seq[char], output: PIhandle) {.gcsafe.} =
