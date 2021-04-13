@@ -45,7 +45,7 @@ let
     resp_btn  = FlatButton("{X}")
     header    = Hbox(rand_btn, link, resp_btn, nil)
     framer    = Vbox(area, nil)
-    cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nChartacter pool: " &
+    cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nCharacter pool: " &
         charpool.join(""))
     cfg_link  = Link(config_file.absolutePath, config_file)
     footer    = Hbox(cfg_info, cfg_link, nil)
