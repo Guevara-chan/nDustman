@@ -56,6 +56,8 @@ withPIhandle(brake_box):
     "VALUE"         "ON"
     "FLAT"          "YES"
     "FGCOLOR"       "255 0 255"
+withPIhandle(middler):
+    "MARGIN"        "0x2"
 withPIhandle(cfg_info):
     "FGCOLOR"       "248 248 255"
     "EXPAND"        "HORIZONTAL"

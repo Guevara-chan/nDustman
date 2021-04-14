@@ -50,11 +50,13 @@ let
     header    = Hbox(rand_btn, link, resp_btn, nil)
     framer    = Vbox(area, nil)
     brake_box = Toggle("Scan new links", "SWITCH")
+    clear_btn = FlatButton("CLEAR")
+    middler   = Hbox(brake_box, nil)
     cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nCharacter pool: " &
         charpool.join(""))
     cfg_link  = Link(config_file.absolutePath, config_file)
     footer    = Hbox(cfg_info, cfg_link, nil)
-    liner     = Vbox(header, Frame(framer), brake_box, footer, nil)
+    liner     = Vbox(header, Frame(framer), middler, footer, nil)
     dlg       = Dialog(liner)
     formattag = User()
 include        "./css.nim"
@@ -70,6 +72,8 @@ niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 niup.SetCallback resp_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     discard getAppFilename().startProcess()
     quit()
+niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
+    area.SetAttribute("VALUE", "")
 
 # Fibers setup.
 cfg.writeConfig config_file
