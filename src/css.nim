@@ -52,6 +52,10 @@ withPIhandle(area):
     "FONT"          "Fixedsys 10"
     "BGCOLOR"       "15 15 15"
     "FORMATTING"    "YES"
+withPIhandle(brake_box):
+    "VALUE"         "ON"
+    "CANFOCUS"      "NO"
+    "FGCOLOR"       "255 0 255"
 withPIhandle(cfg_info):
     "FGCOLOR"       "248 248 255"
     "EXPAND"        "HORIZONTAL"
