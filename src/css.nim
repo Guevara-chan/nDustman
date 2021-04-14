@@ -54,7 +54,7 @@ withPIhandle(area):
     "FORMATTING"    "YES"
 withPIhandle(brake_box):
     "VALUE"         "ON"
-    "CANFOCUS"      "NO"
+    "FLAT"          "YES"
     "FGCOLOR"       "255 0 255"
 withPIhandle(cfg_info):
     "FGCOLOR"       "248 248 255"
