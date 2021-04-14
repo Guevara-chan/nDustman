@@ -37,7 +37,6 @@ withPIhandle(link):
     "FGCOLOR"       "220 20 60"
     "EXPAND"        "HORIZONTAL"
     "ALIGNMENT"     "ACENTER"
-    "LINK"          "NO"
     "PADDING"       "0x3"
 withPIhandle(framer):
     "MARGIN"        "2x2"
@@ -55,7 +54,13 @@ withPIhandle(area):
 withPIhandle(brake_box):
     "VALUE"         "ON"
     "FLAT"          "YES"
-    "FGCOLOR"       "255 0 255"
+    "FGCOLOR"       "218 112 214"
+withPIhandle(scan_stat):
+    "FGCOLOR"       "255 127 80"
+    "ALIGNMENT"     "ACENTER"
+    "PADDING"       "0x0"
+    "EXPAND"        "HORIZONTAL"
+    "RATE"          "0 1"
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPIhandle(cfg_info):
