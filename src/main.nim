@@ -24,7 +24,7 @@ let domains  = "domains".cfget(".com .org .net").split(' ')
 let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
 
 # Fiber body.
-proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats: PIhandle) {.gcsafe.} =
+proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats, autoopen: PIhandle) {.gcsafe.} =
     while true:
         if supressor.GetAttribute("VALUE") == "ON":
             var 
@@ -40,7 +40,8 @@ proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stat
                 log.writeLine url
                 log.close()
                 output.SetAttribute "ADDFORMATTAG", "url"
-                output.SetAttribute "APPEND", url                
+                output.SetAttribute "APPEND", url
+                if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             stats.SetAttribute "TITLE", $(rate[1].toFloat / rate[0].toFloat).formatFloat(ffDecimal, 3) & "% success rate"
             stats.SetAttribute "RATE",  $rate[0] & " " & $rate[1]
@@ -56,10 +57,10 @@ let
     header    = Hbox(rand_btn, link, resp_btn, nil)
     framer    = Vbox(area, nil)
     brake_box = Toggle("Scan new links", "SWITCH")
-    aopen_box = Toggle("Auto-open links", "SWITCH")
+    aopen_box = Toggle("Auto-open finds", "SWITCH")
     scan_stat = Label("")
     clear_btn = FlatButton("CLEAR")
-    middler   = Hbox(brake_box, scan_stat, nil)
+    middler   = Hbox(brake_box, scan_stat, aopen_box, nil)
     cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nCharacter pool: " &
         charpool.join(""))
     cfg_link  = Link(config_file.absolutePath, config_file)
@@ -87,7 +88,7 @@ niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 cfg.writeConfig config_file
 for urlen in urlimit.min..urlimit.max:
     for domain in domains:
-        spawn finder(urlen, domain, charpool, area, brake_box, scan_stat)
+        spawn finder(urlen, domain, charpool, area, brake_box, scan_stat, aopen_box)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER
