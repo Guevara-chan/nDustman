@@ -65,7 +65,7 @@ withPIhandle(aopen_box):
     "FLAT"          "YES"
     "FGCOLOR"       "255 3 62"
     "ALIGNMENT"     "ARIGHT"
-    #"RIGHTBUTTON"   "YES"
+    "RIGHTBUTTON"   "YES"
     "MARGIN"        "0x0"
     "PADDING"       "0x0"
 withPIhandle(middler):

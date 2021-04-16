@@ -2,7 +2,7 @@
 # nDustman junk sites URL generator v0.02   #
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
-import random, nativesockets, threadpool, parsecfg, strutils, sequtils, browsers, os, osproc, niup, niupext
+import random, nativesockets, threadpool, locks, parsecfg, strutils, sequtils, browsers, os, osproc, niup, niupext
 
 # Basic init.
 randomize()
@@ -12,6 +12,8 @@ const
     finds_file  = "finds.txt"
 config_file.open(fmAppend).close()
 var cfg = config_file.loadConfig()
+var stat_lock: Lock
+stat_lock.initLock()
 
 # Aux configuration proc.
 proc cfget(key: string, def_val: string): string =
@@ -22,6 +24,7 @@ proc cfget(key: string, def_val: string): string =
 let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
 let domains  = "domains".cfget(".com .org .net").split(' ')
 let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
+let autoopen = "auto_open".cfget("0").parseInt.bool
 
 # Fiber body.
 proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats, autoopen: PIhandle) {.gcsafe.} =
@@ -43,8 +46,9 @@ proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stat
                 output.SetAttribute "APPEND", url
                 if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
-            stats.SetAttribute "TITLE", $(rate[1].toFloat / rate[0].toFloat).formatFloat(ffDecimal, 3) & "% success rate"
-            stats.SetAttribute "RATE",  $rate[0] & " " & $rate[1]
+            statlock.withLock:
+                stats.SetAttribute "TITLE", $(rate[1] / rate[0]).formatFloat(ffDecimal, 3) & "% success rate"
+                stats.SetAttribute "RATE",  $rate[0] & " " & $rate[1]
         else: sleep(200)
 
 # UI code.
@@ -68,10 +72,11 @@ let
     liner     = Vbox(header, Frame(framer), middler, footer, nil)
     dlg       = Dialog(liner)
     formattag = User()
+if autoopen: aopen_box.SetAttribute("VALUE", "ON")
+SetHandle("url", formattag)
 include        "./css.nim"
 
-# Callbacks setup and naming.
-SetHandle("url", formattag)
+# Callbacks setup.
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
     link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
