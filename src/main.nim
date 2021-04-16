@@ -24,7 +24,6 @@ proc cfget(key: string, def_val: string): string =
 let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
 let domains  = "domains".cfget(".com .org .net").split(' ')
 let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
-let autoopen = "auto_open".cfget("0").parseInt.bool
 
 # Fiber body.
 proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats, autoopen: PIhandle) {.gcsafe.} =
@@ -72,11 +71,11 @@ let
     liner     = Vbox(header, Frame(framer), middler, footer, nil)
     dlg       = Dialog(liner)
     formattag = User()
-if autoopen: aopen_box.SetAttribute("VALUE", "ON")
-SetHandle("url", formattag)
 include        "./css.nim"
 
-# Callbacks setup.
+# Callbacks setup & small stuff.
+SetHandle("url", formattag)
+if "auto_open".cfget("0").parseInt.bool: aopen_box.SetAttribute("VALUE", "ON")
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
     link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
@@ -86,8 +85,10 @@ niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 niup.SetCallback resp_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     discard getAppFilename().startProcess()
     quit()
-niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
-    area.SetAttribute("VALUE", "")
+niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
+    cfg.setSectionKey "", "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
+    cfg.writeConfig config_file
+niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = area.SetAttribute("VALUE", "")
 
 # Fibers setup.
 cfg.writeConfig config_file
