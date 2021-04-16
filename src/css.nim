@@ -53,8 +53,9 @@ withPIhandle(area):
     "FORMATTING"    "YES"
 withPIhandle(brake_box):
     "VALUE"         "ON"
-    "FLAT"          "YES"
+withPIhandle(brake_txt):
     "FGCOLOR"       "218 112 214"
+    "PADDING"       "2x0"
 withPIhandle(scan_stat):
     "FGCOLOR"       "255 127 80"
     "ALIGNMENT"     "ACENTER"
@@ -66,17 +67,21 @@ withPIhandle(aopen_txt):
     "ALIGNMENT"     "ARIGHT"
     "PADDING"       "2x0"
 withPIhandle(aopen_box):
-    "FLAT"          "YES"
     "RIGHTBUTTON"   "YES"
-    "MARGIN"        "0x0"
-    "SHRINK"        "YES"
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPIhandle(cfg_info):
     "FGCOLOR"       "248 248 255"
     "EXPAND"        "HORIZONTAL"
+withPIhandle(fnd_link):
+    "ALIGNMENT"     "ARIGHT:ATOP"
+    "EXPAND"        "HORIZONTAL"
+    "FGCOLOR"       "248 131 121"
+withPIhandle(links_blk):
+    "MARGIN"        "1x0"
 withPIhandle(cfg_link):
     "ALIGNMENT"     "ARIGHT:ABOTTOM"
+    "EXPAND"        "HORIZONTAL"
     "FGCOLOR"       "33 171 205"
 withPIhandle(footer):
     "MARGIN"        "0x3"
