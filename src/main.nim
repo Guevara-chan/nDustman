@@ -1,5 +1,5 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
-# nDustman junk sites URL generator v0.02   #
+# nDustman junk sites URL generator v0.03   #
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, locks, parsecfg, strutils, sequtils, browsers, os, osproc, niup, niupext
@@ -60,10 +60,11 @@ let
     header    = Hbox(rand_btn, link, resp_btn, nil)
     framer    = Vbox(area, nil)
     brake_box = Toggle("Scan new links", "SWITCH")
-    aopen_box = Toggle("Auto-open finds", "SWITCH")
+    aopen_box = Toggle("", "SWITCH")
+    aopen_txt = Label("Auto-open finds")
     scan_stat = Label("")
     clear_btn = FlatButton("CLEAR")
-    middler   = Hbox(brake_box, scan_stat, aopen_box, nil)
+    middler   = Hbox(brake_box, scan_stat, aopen_txt, aopen_box, nil)
     cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nCharacter pool: " &
         charpool.join(""))
     cfg_link  = Link(config_file.absolutePath, config_file)

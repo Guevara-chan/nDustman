@@ -4,7 +4,7 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 withPIhandle(dlg):
-    "TITLE"         "nDustman v0.02"
+    "TITLE"         "nDustman v0.03"
     "MARGIN"        "5x5"
     "SIZE"          "250x150"
     "SHRINK"        "YES"
@@ -61,13 +61,15 @@ withPIhandle(scan_stat):
     "PADDING"       "0x0"
     "EXPAND"        "HORIZONTAL"
     "RATE"          "0 1"
-withPIhandle(aopen_box):
-    "FLAT"          "YES"
+withPIhandle(aopen_txt):
     "FGCOLOR"       "255 3 62"
     "ALIGNMENT"     "ARIGHT"
+    "PADDING"       "2x0"
+withPIhandle(aopen_box):
+    "FLAT"          "YES"
     "RIGHTBUTTON"   "YES"
     "MARGIN"        "0x0"
-    "PADDING"       "0x0"
+    "SHRINK"        "YES"
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPIhandle(cfg_info):
