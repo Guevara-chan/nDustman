@@ -2,7 +2,8 @@
 # nDustman junk sites URL generator v0.03   #
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
-import random, nativesockets, threadpool, locks, parsecfg, strutils, sequtils, browsers, os, osproc, niup, niupext
+import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
+import locks, browsers, os, osproc, httpclient, niup, niupext # Actual.
 
 # Basic init.
 randomize()
@@ -27,6 +28,7 @@ let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower(
 
 # Fiber body.
 proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats, autoopen: PIhandle) {.gcsafe.} =
+    let client = newHttpClient()
     while true:
         if supressor.GetAttribute("VALUE") == "ON":
             var 
@@ -37,13 +39,14 @@ proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stat
             try:
                 rate[0] += 1 # Checked.
                 discard url.getAddrInfo(Port 80, AfUnspec)
-                rate[1] += 1 # Found.
-                let log = open(finds_file, fmAppend)
-                log.writeLine url
-                log.close()
-                output.SetAttribute "ADDFORMATTAG", "url"
-                output.SetAttribute "APPEND", url
-                if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
+                if client.head("http://" & url).status == "200 OK":                
+                    rate[1] += 1 # Found.
+                    let log = open(finds_file, fmAppend)
+                    log.writeLine url
+                    log.close()
+                    output.SetAttribute "ADDFORMATTAG", "url"
+                    output.SetAttribute "APPEND", url
+                    if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
                 stats.SetAttribute "TITLE", $(rate[1] / rate[0]).formatFloat(ffDecimal, 3) & "% success rate"
