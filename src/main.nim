@@ -12,8 +12,9 @@ const
     config_file = "config.ini"
     finds_file  = "finds.txt"
 config_file.open(fmAppend).close()
-var cfg = config_file.loadConfig()
-var stat_lock: Lock
+var 
+    cfg = config_file.loadConfig()
+    stat_lock: Lock
 stat_lock.initLock()
 
 # Aux configuration proc.
@@ -22,21 +23,24 @@ proc cfget(key: string, def_val: string): string =
     cfg.setSectionKey "", key, result
 
 # Config parsing.
-let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
-let domains  = "domains".cfget(".com .org .net").split(' ')
-let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
-let mask     = "mask".cfget("www.*")
+let 
+    urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
+    domains  = "domains".cfget(".com .org .net").split(' ')
+    charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
+    mask     = "mask".cfget("www.*")
 
 # Fiber body.
 proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
-    let client = newHttpClient()
+    let 
+        client = newHttpClient()
+        decor  = mask.split("*", 1)
     while true:
         if supressor.GetAttribute("VALUE") == "ON":
             var 
-                url = "www."
+                url = decor[0]
                 rate = stats.GetAttribute("RATE").`$`.split(' ').map(parseInt)
             for i in 1..urlen: url &= sample(pool)
-            url &= domain
+            url &= decor[1] & domain
             try:
                 rate[0] += 1 # Checked.
                 discard url.getAddrInfo(Port 80, AfUnspec)
@@ -50,7 +54,7 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                     if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
-                stats.SetAttribute "TITLE", $(rate[1] / rate[0]).formatFloat(ffDecimal, 3) & "% success rate"
+                stats.SetAttribute "TITLE", $(rate[1]/rate[0] * 100).formatFloat(ffDecimal, 3) & "% success rate"
                 stats.SetAttribute "RATE",  $rate[0] & " " & $rate[1]
         else: sleep(200)
 
