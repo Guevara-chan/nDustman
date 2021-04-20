@@ -38,14 +38,13 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
         if supressor.GetAttribute("VALUE") == "ON":
             var 
                 url = decor[0]
-                rate = stats.GetAttribute("RATE").`$`.split(' ').map(parseInt)
+                success = 0
             for i in 1..urlen: url &= sample(pool)
             url &= decor[1] & domain
             try:
-                rate[0] += 1 # Checked.
                 discard url.getAddrInfo(Port 80, AfUnspec)
                 if client.head("http://" & url).status == "200 OK":                
-                    rate[1] += 1 # Found.
+                    success = 1                    
                     let log = open(finds_file, fmAppend)
                     log.writeLine url
                     log.close()
@@ -54,6 +53,8 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                     if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
+                var rate = stats.GetAttribute("RATE").`$`.split(' ').map(parseInt)
+                rate[0] += 1; rate[1] += success
                 stats.SetAttribute "TITLE", $(rate[1]/rate[0] * 100).formatFloat(ffDecimal, 3) & "% success rate"
                 stats.SetAttribute "RATE",  $rate[0] & " " & $rate[1]
         else: sleep(200)
