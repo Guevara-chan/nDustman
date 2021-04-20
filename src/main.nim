@@ -25,9 +25,10 @@ proc cfget(key: string, def_val: string): string =
 let urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
 let domains  = "domains".cfget(".com .org .net").split(' ')
 let charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
+let mask     = "mask".cfget("www.*")
 
 # Fiber body.
-proc finder(urlen: int, domain: string, pool: seq[char]; output, supressor, stats, autoopen: PIhandle) {.gcsafe.} =
+proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
     let client = newHttpClient()
     while true:
         if supressor.GetAttribute("VALUE") == "ON":
@@ -101,7 +102,7 @@ niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 cfg.writeConfig config_file
 for urlen in urlimit.min..urlimit.max:
     for domain in domains:
-        spawn finder(urlen, domain, charpool, area, brake_box, scan_stat, aopen_box)
+        spawn finder(urlen, mask, domain, charpool, area, brake_box, scan_stat, aopen_box)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER
