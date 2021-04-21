@@ -14,8 +14,8 @@ const
 config_file.open(fmAppend).close()
 var 
     cfg = config_file.loadConfig()
-    stat_lock: Lock
-stat_lock.initLock()
+    stat_lock, output_lock: Lock
+stat_lock.initLock(); output_lock.initLock()
 
 # Aux configuration proc.
 proc cfget(key: string, def_val: string): string =
@@ -48,8 +48,9 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                     let log = open(finds_file, fmAppend)
                     log.writeLine url
                     log.close()
-                    output.SetAttribute "ADDFORMATTAG", "url"
-                    output.SetAttribute "APPEND", url
+                    output_lock.withLock:
+                        output.SetAttribute "ADDFORMATTAG", "url"
+                        output.SetAttribute "APPEND", url
                     if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
