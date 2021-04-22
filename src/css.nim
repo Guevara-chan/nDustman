@@ -96,7 +96,6 @@ withPihandle(dom_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x3"
 withPIhandle(dom_ibox):
-    "READONLY"      "YES"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         domains.join(" ")
@@ -106,7 +105,6 @@ withPihandle(mask_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x3"
 withPIhandle(mask_ibox):
-    "READONLY"      "YES"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         mask
@@ -116,7 +114,6 @@ withPihandle(pool_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x3"
 withPIhandle(pool_ibox):
-    "READONLY"      "YES"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         charpool.join("")
