@@ -116,7 +116,9 @@ niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.setSectionKey "", "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
     cfg.writeConfig config_file
-niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = area.SetAttribute("VALUE", "")
+niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
+    output_lock.withLock:
+        area.SetAttribute "VALUE", ""
 
 # Fibers setup.
 cfg.writeConfig config_file

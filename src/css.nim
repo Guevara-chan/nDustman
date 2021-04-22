@@ -78,6 +78,7 @@ withPihandle(min_hint):
 withPIhandle(min_spin):
     "SPIN"          "YES"
     "READONLY"      "YES"
+    "SPINMIN"       "1"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         $(urlimit.min)
@@ -87,6 +88,7 @@ withPihandle(max_hint):
 withPIhandle(max_spin):
     "SPIN"          "YES"
     "READONLY"      "YES"
+    "SPINMIN"       "1"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         $(urlimit.max)
@@ -98,6 +100,7 @@ withPihandle(dom_hint):
 withPIhandle(dom_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "MASK"          "(/./w+/s?)+"
     "VALUE"         domains.join(" ")
 withPIhandle(domainer):
     "MARGIN"        "0x1"
@@ -116,6 +119,7 @@ withPihandle(pool_hint):
 withPIhandle(pool_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "MASK"          "(/w|/-)+"
     "VALUE"         charpool.join("")
 withPIhandle(pooler):
     "MARGIN"        "0x1"
