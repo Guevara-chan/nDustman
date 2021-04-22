@@ -107,11 +107,9 @@ niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
     if url.len > 0: openDefaultBrowser("http://" & url)
 niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
-    cfg.setSectionKey "", "min_url",   min_spin.GetAttribute("VALUE").`$`
-    cfg.setSectionKey "", "max_url",   max_spin.GetAttribute("VALUE").`$`
-    cfg.setSectionKey "", "domains",   dom_ibox.GetAttribute("VALUE").`$`
-    cfg.setSectionKey "", "char_pool", pool_ibox.GetAttribute("VALUE").`$`
-    cfg.setSectionKey "", "mask",      mask_ibox.GetAttribute("VALUE").`$`
+    for feed in @[("min_url", min_spin), ("max_url", max_spin), ("domains", dom_ibox), ("char_pool", pool_ibox), 
+    ("mask", mask_ibox)]:
+        cfg.setSectionKey "", feed[0], feed[1].GetAttribute("VALUE").`$`
     cfg.writeConfig config_file
     discard getAppFilename().startProcess()
     quit()
