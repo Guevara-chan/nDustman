@@ -66,37 +66,53 @@ let
     area      = Text(nil)
     link      = Link("https://vk.com/guevara_chan", "Developed in 2021 by Guevara-chan") 
     rand_btn  = FlatButton("GO RANDOM")
-    resp_btn  = FlatButton("{X}")
-    header    = Hbox(rand_btn, link, resp_btn, nil)
+    clear_btn = FlatButton("{X}")
+    header    = Hbox(rand_btn, link, clear_btn, nil)
     framer    = Vbox(area, nil)
     brake_box = Toggle("", "SWITCH")
     brake_txt = Label("Scan new links")
     aopen_box = Toggle("", "SWITCH")
     aopen_txt = Label("Auto-open finds")
     scan_stat = Label("")
-    clear_btn = FlatButton("CLEAR")
     middler   = Hbox(brake_box, brake_txt, scan_stat, aopen_txt, aopen_box, nil)
-    cfg_info  = Label("URL length range = " & $urlimit & "\nApplicable domains: " & $domains & "\nCharacter pool: " &
-        charpool.join(""))
+    min_hint  = Label("Min URL length:")
+    min_spin  = Text(nil)
+    max_hint  = Label("Max URL length:")
+    max_spin  = Text(nil)
+    minmaxer  = Hbox(min_hint, min_spin, max_hint, max_spin, nil)
+    dom_hint  = Label("Applicable domains:")
+    dom_ibox  = Text(nil)
+    domainer  = HBox(dom_hint, dom_ibox, nil)
+    mask_hint = Label("Generation mask:")
+    mask_ibox = Text(nil)
+    masker    = HBox(mask_hint, mask_ibox, nil)
+    pool_hint = Label("Character pool:")
+    pool_ibox = Text(nil)
+    pooler    = HBox(pool_hint, pool_ibox, nil)
     cfg_link  = Link(config_file.absolutePath, config_file)
+    apply_btn = FlatButton("APPLY CONFIG")
     fnd_link  = Link(finds_file.absolutePath, finds_file)
-    links_blk = Vbox(fnd_link, cfg_link)
-    footer    = Hbox(cfg_info, links_blk, nil)
-    liner     = Vbox(header, Frame(framer), middler, footer, nil)
+    footer    = Hbox(fnd_link, apply_btn, cfg_link, nil)
+    liner     = Vbox(header, Frame(framer), middler, minmaxer, domainer, masker, pooler, footer, nil)
     dlg       = Dialog(liner)
     formattag = User()
 include        "./css.nim"
 
 # Callbacks setup & small stuff.
 SetHandle("url", formattag)
-if "auto_open".cfget("0").parseInt.bool: aopen_box.SetAttribute("VALUE", "ON")
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
     link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
     if url.len > 0: openDefaultBrowser("http://" & url)
-niup.SetCallback resp_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
+niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
+    cfg.setSectionKey "", "min_url",   min_spin.GetAttribute("VALUE").`$`
+    cfg.setSectionKey "", "max_url",   max_spin.GetAttribute("VALUE").`$`
+    cfg.setSectionKey "", "domains",   dom_ibox.GetAttribute("VALUE").`$`
+    cfg.setSectionKey "", "char_pool", pool_ibox.GetAttribute("VALUE").`$`
+    cfg.setSectionKey "", "mask",      mask_ibox.GetAttribute("VALUE").`$`
+    cfg.writeConfig config_file
     discard getAppFilename().startProcess()
     quit()
 niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =

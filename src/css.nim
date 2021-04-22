@@ -6,7 +6,7 @@
 withPIhandle(dlg):
     "TITLE"         "nDustman v0.03"
     "MARGIN"        "5x5"
-    "SIZE"          "250x150"
+    "SIZE"          "250x170"
     "SHRINK"        "YES"
     "MINSIZE"       "270x150"
     "BGCOLOR"       "31 31 31"
@@ -22,7 +22,7 @@ withPIhandle(rand_btn):
     "BORDER"        "YES"
     "FOCUSFEEDBACK" "NO"
     "PADDING"       "5x2"
-withPIhandle(resp_btn):
+withPIhandle(clear_btn):
     "ALIGNMENT"     "ARIGHT"
     "BGCOLOR"       "15 15 15"
     "BORDERCOLOR"   "64 64 64"
@@ -68,21 +68,78 @@ withPIhandle(aopen_txt):
     "PADDING"       "2x0"
 withPIhandle(aopen_box):
     "RIGHTBUTTON"   "YES"
+    "VALUE"         @["OFF", "ON"]["auto_open".cfget("0").parseInt.bool.int]
 withPIhandle(middler):
     "MARGIN"        "0x2"
-withPIhandle(cfg_info):
+withPihandle(min_hint):
     "FGCOLOR"       "248 248 255"
+    "ALIGNMENT"     "ALEFT:ACENTER"
+    "PADDING"       "2x3"
+withPIhandle(min_spin):
+    "SPIN"          "YES"
+    "READONLY"      "YES"
+    "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "VALUE"         $(urlimit.min)
+withPihandle(max_hint):
+    "FGCOLOR"       "248 248 255"
+    "PADDING"       "2x3"
+withPIhandle(max_spin):
+    "SPIN"          "YES"
+    "READONLY"      "YES"
+    "FGCOLOR"       "0 206 209"
+    "EXPAND"        "HORIZONTAL"
+    "VALUE"         $(urlimit.max)
+withPIhandle(minmaxer):
+    "MARGIN"        "0x2"
+withPihandle(dom_hint):
+    "FGCOLOR"       "248 248 255"
+    "PADDING"       "2x3"
+withPIhandle(dom_ibox):
+    "READONLY"      "YES"
+    "FGCOLOR"       "0 206 209"
+    "EXPAND"        "HORIZONTAL"
+    "VALUE"         domains.join(" ")
+withPIhandle(domainer):
+    "MARGIN"        "0x1"
+withPihandle(mask_hint):
+    "FGCOLOR"       "248 248 255"
+    "PADDING"       "2x3"
+withPIhandle(mask_ibox):
+    "READONLY"      "YES"
+    "FGCOLOR"       "0 206 209"
+    "EXPAND"        "HORIZONTAL"
+    "VALUE"         mask
+withPIhandle(masker):
+    "MARGIN"        "0x1"
+withPihandle(pool_hint):
+    "FGCOLOR"       "248 248 255"
+    "PADDING"       "2x3"
+withPIhandle(pool_ibox):
+    "READONLY"      "YES"
+    "FGCOLOR"       "0 206 209"
+    "EXPAND"        "HORIZONTAL"
+    "VALUE"         charpool.join("")
+withPIhandle(pooler):
+    "MARGIN"        "0x1"
 withPIhandle(fnd_link):
-    "ALIGNMENT"     "ARIGHT:ATOP"
+    "ALIGNMENT"     "ALEFT:ABOTTOM"
     "EXPAND"        "HORIZONTAL"
     "FGCOLOR"       "248 131 121"
-withPIhandle(links_blk):
-    "MARGIN"        "1x0"
 withPIhandle(cfg_link):
     "ALIGNMENT"     "ARIGHT:ABOTTOM"
     "EXPAND"        "HORIZONTAL"
     "FGCOLOR"       "33 171 205"
+withPIhandle(apply_btn):
+    "BGCOLOR"       "15 15 15"
+    "BORDERCOLOR"   "218 165 32"
+    "FGCOLOR"       "218 165 32"
+    "HLCOLOR"       "61 41 31"
+    "TEXTHLCOLOR"   "255 215 0"
+    "PSCOLOR"       "255 215 0"
+    "BORDER"        "YES"
+    "FOCUSFEEDBACK" "NO"
+    "PADDING"       "5x2"
 withPIhandle(footer):
     "MARGIN"        "0x3"
 withPIhandle(liner):
