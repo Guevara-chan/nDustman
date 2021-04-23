@@ -1,5 +1,5 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
-# nDustman junk sites URL generator v0.03   #
+# nDustman junk sites URL generator v0.04   #
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
@@ -104,7 +104,7 @@ include        "./css.nim"
 SetHandle("url", formattag)
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
-    link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
+    if url.len >0: link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
     if url.len > 0: openDefaultBrowser("http://" & url)
@@ -120,7 +120,8 @@ niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.writeConfig config_file
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
     output_lock.withLock:
-        area.SetAttribute "VALUE", ""
+        area.SetAttribute "SELECTION", "ALL"
+        area.SetAttribute "SELECTEDTEXT", ""        
 niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} = 
     max_spin.SetAttribute "SPINMIN", ih.GetAttribute("VALUE")
 niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =

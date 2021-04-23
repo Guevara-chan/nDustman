@@ -4,11 +4,11 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 
 withPIhandle(dlg):
-    "TITLE"         "nDustman v0.03"
+    "TITLE"         "nDustman v0.04"
     "MARGIN"        "5x5"
     "SIZE"          "250x170"
     "SHRINK"        "YES"
-    "MINSIZE"       "270x250"
+    "MINSIZE"       "368x250"
     "BGCOLOR"       "31 31 31"
 withPIhandle(header):
     "MARGIN"        "0x3"
@@ -81,6 +81,7 @@ withPIhandle(min_spin):
     "SPINMIN"       "1"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "NOHIDESEL"     "NO"
     "VALUE"         $(urlimit.min)
     "SPINMAX"       $(urlimit.max)
 withPihandle(max_hint):
@@ -92,6 +93,7 @@ withPIhandle(max_spin):
     "SPINMIN"       "1"
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "NOHIDESEL"     "NO"
     "VALUE"         $(urlimit.max)
     "SPINMIN"       $(urlimit.min)
 withPIhandle(minmaxer):
@@ -103,6 +105,7 @@ withPIhandle(dom_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/./w+ )*(/./w+ ?)"
+    "NOHIDESEL"     "NO"
     "VALUE"         domains.join(" ")
 withPIhandle(domainer):
     "MARGIN"        "0x1"
@@ -113,6 +116,7 @@ withPIhandle(mask_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/.|/-)*/*(/w|/./-)*"
+    "NOHIDESEL"     "NO"
     "VALUE"         mask
 withPIhandle(masker):
     "MARGIN"        "0x1"
@@ -123,17 +127,22 @@ withPIhandle(pool_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/-)+"
+    "NOHIDESEL"     "NO"
     "VALUE"         charpool.join("")
 withPIhandle(pooler):
     "MARGIN"        "0x1"
 withPIhandle(fnd_link):
     "ALIGNMENT"     "ALEFT:ABOTTOM"
-    "EXPAND"        "HORIZONTAL"
+    "EXPAND"        "VERTICALFREE"
     "FGCOLOR"       "248 131 121"
 withPIhandle(cfg_link):
     "ALIGNMENT"     "ARIGHT:ABOTTOM"
-    "EXPAND"        "HORIZONTAL"
+    "EXPAND"        "VERTICALFREE"
     "FGCOLOR"       "33 171 205"
+withPIhandle(fnd_span):
+    "EXPAND"        "HORIZONTAL"
+withPIhandle(cfg_span):
+    "EXPAND"        "HORIZONTAL"
 withPIhandle(apply_btn):
     "BGCOLOR"       "15 15 15"
     "BORDERCOLOR"   "218 165 32"
