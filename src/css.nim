@@ -73,8 +73,8 @@ withPIhandle(middler):
     "MARGIN"        "0x2"
 withPihandle(min_hint):
     "FGCOLOR"       "248 248 255"
-    "ALIGNMENT"     "ALEFT:ACENTER"
-    "PADDING"       "2x3"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
 withPIhandle(min_spin):
     "SPIN"          "YES"
     "READONLY"      "YES"
@@ -86,7 +86,8 @@ withPIhandle(min_spin):
     "SPINMAX"       $(urlimit.max)
 withPihandle(max_hint):
     "FGCOLOR"       "248 248 255"
-    "PADDING"       "2x3"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
 withPIhandle(max_spin):
     "SPIN"          "YES"
     "READONLY"      "YES"
@@ -100,7 +101,8 @@ withPIhandle(minmaxer):
     "MARGIN"        "0x2"
 withPihandle(dom_hint):
     "FGCOLOR"       "248 248 255"
-    "PADDING"       "2x3"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
 withPIhandle(dom_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
@@ -111,7 +113,8 @@ withPIhandle(domainer):
     "MARGIN"        "0x1"
 withPihandle(mask_hint):
     "FGCOLOR"       "248 248 255"
-    "PADDING"       "2x3"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
 withPIhandle(mask_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
@@ -122,7 +125,8 @@ withPIhandle(masker):
     "MARGIN"        "0x1"
 withPihandle(pool_hint):
     "FGCOLOR"       "248 248 255"
-    "PADDING"       "2x3"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
 withPIhandle(pool_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
@@ -145,11 +149,11 @@ withPIhandle(cfg_span):
     "EXPAND"        "HORIZONTAL"
 withPIhandle(apply_btn):
     "BGCOLOR"       "15 15 15"
-    "BORDERCOLOR"   "218 165 32"
-    "FGCOLOR"       "218 165 32"
-    "HLCOLOR"       "61 41 31"
-    "TEXTHLCOLOR"   "255 215 0"
-    "PSCOLOR"       "255 215 0"
+    "BORDERCOLOR"   "189 183 107"
+    "FGCOLOR"       "189 183 107"
+    "HLCOLOR"       "41 41 31"
+    "TEXTHLCOLOR"   "240 230 140"
+    "PSCOLOR"       "240 230 140"
     "BORDER"        "YES"
     "FOCUSFEEDBACK" "NO"
     "PADDING"       "5x2"

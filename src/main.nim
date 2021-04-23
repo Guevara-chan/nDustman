@@ -104,7 +104,7 @@ include        "./css.nim"
 SetHandle("url", formattag)
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
-    if url.len >0: link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
+    if url.len > 0 : link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
     if url.len > 0: openDefaultBrowser("http://" & url)
