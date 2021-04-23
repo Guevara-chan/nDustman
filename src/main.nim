@@ -118,7 +118,7 @@ niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.writeConfig config_file
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
     output_lock.withLock:
-        area.SetAttribute "CLIPBOARD", "CLEAR"
+        area.SetAttribute "VALUE", ""
 niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} = 
     max_spin.SetAttribute "SPINMIN", ih.GetAttribute("VALUE")
 niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =

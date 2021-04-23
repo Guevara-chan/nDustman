@@ -8,7 +8,7 @@ withPIhandle(dlg):
     "MARGIN"        "5x5"
     "SIZE"          "250x170"
     "SHRINK"        "YES"
-    "MINSIZE"       "270x150"
+    "MINSIZE"       "270x250"
     "BGCOLOR"       "31 31 31"
 withPIhandle(header):
     "MARGIN"        "0x3"
