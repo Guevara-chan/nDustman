@@ -82,6 +82,7 @@ withPIhandle(min_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         $(urlimit.min)
+    "SPINMAX"       $(urlimit.max)
 withPihandle(max_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x3"
@@ -92,6 +93,7 @@ withPIhandle(max_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "VALUE"         $(urlimit.max)
+    "SPINMIN"       $(urlimit.min)
 withPIhandle(minmaxer):
     "MARGIN"        "0x2"
 withPihandle(dom_hint):
@@ -100,7 +102,7 @@ withPihandle(dom_hint):
 withPIhandle(dom_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
-    "MASK"          "(/./w+/s?)+"
+    "MASK"          "(/./w+ )*(/./w+ ?)"
     "VALUE"         domains.join(" ")
 withPIhandle(domainer):
     "MARGIN"        "0x1"
@@ -110,6 +112,7 @@ withPihandle(mask_hint):
 withPIhandle(mask_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
+    "MASK"          "(/w|/.|/-)*/*(/w|/./-)*"
     "VALUE"         mask
 withPIhandle(masker):
     "MARGIN"        "0x1"

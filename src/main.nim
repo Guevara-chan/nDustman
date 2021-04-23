@@ -73,7 +73,7 @@ let
     brake_txt = Label("Scan new links")
     aopen_box = Toggle("", "SWITCH")
     aopen_txt = Label("Auto-open finds")
-    scan_stat = Label("")
+    scan_stat = Label("Creating fibers...")
     middler   = Hbox(brake_box, brake_txt, scan_stat, aopen_txt, aopen_box, nil)
     min_hint  = Label("Min URL length:")
     min_spin  = Text(nil)
@@ -109,7 +109,7 @@ niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     for feed in @[("min_url", min_spin), ("max_url", max_spin), ("domains", dom_ibox), ("char_pool", pool_ibox), 
     ("mask", mask_ibox)]:
-        cfg.setSectionKey "", feed[0], feed[1].GetAttribute("VALUE").`$`
+        cfg.setSectionKey "", feed[0], feed[1].GetAttribute("VALUE").`$`.strip()
     cfg.writeConfig config_file
     discard getAppFilename().startProcess()
     quit()
@@ -118,7 +118,11 @@ niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.writeConfig config_file
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
     output_lock.withLock:
-        area.SetAttribute "VALUE", ""
+        area.SetAttribute "CLIPBOARD", "CLEAR"
+niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} = 
+    max_spin.SetAttribute "SPINMIN", ih.GetAttribute("VALUE")
+niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =
+    min_spin.SetAttribute "SPINMAX", ih.GetAttribute("VALUE")
 
 # Fibers setup.
 cfg.writeConfig config_file
