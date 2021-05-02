@@ -29,6 +29,7 @@ let
     charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
     mask     = "mask".cfget("www.*")
 
+# Content heurystics.
 proc get_summary(url: string, max_len = 20): string =
     proc checkNil(txt: string): string =
         result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
@@ -40,7 +41,7 @@ proc get_summary(url: string, max_len = 20): string =
             except: discard
     try:
         let html = newHttpClient(timeout = 15000).getContent("http://" & url)
-        result = if html.len > 15:
+        result = if html.len > max_len:
             try:
                 let html = html.parseHtml
                 (try: html.findAll("title")[0].innerText.checkNil except: html.anyText.checkNil).substr(0, max_len)
