@@ -3,7 +3,7 @@
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
-import locks, browsers, os, osproc, httpclient, niup, niupext # Actual.
+import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree  # Actual.
 
 # Basic init.
 randomize()
@@ -29,10 +29,22 @@ let
     charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
     mask     = "mask".cfget("www.*")
 
+proc get_title(url: string): string =
+    try:
+        let 
+            client = newHttpClient(timeout = 15000)
+            doc    = client.getContent("http://" & url).parseHtml()
+            head   = doc.child("head")
+        if not head.isNil:
+            let title = head.child("title")
+            if not title.isNil: result = title.innerText
+    except: discard
+    if result != "": result = " (" & result & ")"
+
 # Fiber body.
 proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
     let 
-        client = newHttpClient()
+        client = newHttpClient(timeout = 5000)
         decor  = mask.split("*", 1)
     while true:
         if supressor.GetAttribute("VALUE") == "ON":
@@ -43,14 +55,25 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
             url &= decor[1] & domain
             try:
                 discard url.getAddrInfo(Port 80, AfUnspec)
-                if client.head("http://" & url).status == "200 OK":                
+                if client.head("http://" & url).status == "200 OK":              
                     success = 1                    
                     let log = open(finds_file, fmAppend)
                     log.writeLine url
                     log.close()
+                    let 
+                        urltag    = User()
+                        sumtag    = User()
+                        summary   = url.get_title()
+                    urltag.SetAttribute("FGCOLOR", "248 131 121")
+                    sumtag.SetAttribute("FGCOLOR", "124 65 60")
+                    SetHandle("url", urltag)
+                    SetHandle("sum", sumtag)
                     output_lock.withLock:
+                        if output.GetAttribute("VALUE") != "": output.SetAttribute "APPEND", "\n"
                         output.SetAttribute "ADDFORMATTAG", "url"
                         output.SetAttribute "APPEND", url
+                        output.SetAttribute "ADDFORMATTAG", "sum"
+                        output.SetAttribute "APPEND", summary
                     if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
@@ -97,13 +120,11 @@ let
     footer    = Hbox(fnd_link, fnd_span, apply_btn, cfg_span, cfg_link, nil)
     liner     = Vbox(header, Frame(framer), middler, minmaxer, domainer, masker, pooler, footer, nil)
     dlg       = Dialog(liner)
-    formattag = User()
 include        "./css.nim"
 
 # Callbacks setup & small stuff.
-SetHandle("url", formattag)
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
-    let url = "http://" & ih.GetAttribute("LINEVALUE").`$`
+    let url = "http://" & ih.GetAttribute("LINEVALUE").`$`.split(' ')[0]
     if url.len > 0 : link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
@@ -119,9 +140,7 @@ niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.setSectionKey "", "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
     cfg.writeConfig config_file
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
-    output_lock.withLock:
-        area.SetAttribute "SELECTION", "ALL"
-        area.SetAttribute "SELECTEDTEXT", ""        
+    output_lock.withLock: area.SetAttribute "VALUE", ""
 niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} = 
     max_spin.SetAttribute "SPINMIN", ih.GetAttribute("VALUE")
 niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =

@@ -45,7 +45,7 @@ withPIhandle(area):
     "MULTILINE"     "YES"
     "EXPAND"        "YES"
     "NAME"          "MULTITEXT"
-    "APPENDNEWLINE" "YES"
+    "APPENDNEWLINE" "NO"
     "READONLY"      "YES"
     "BORDER"        "NO"
     "FONT"          "Fixedsys 10"
@@ -161,6 +161,3 @@ withPIhandle(footer):
     "MARGIN"        "0x3"
 withPIhandle(liner):
     "MARGIN"        "3x0"
-withPIhandle(formattag):
-    "FGCOLOR"       "248 131 121"
-    "SELECTION"     "ALL"
