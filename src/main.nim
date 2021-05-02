@@ -29,15 +29,23 @@ let
     charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
     mask     = "mask".cfget("www.*")
 
-proc get_title(url: string): string =
+proc get_summary(url: string, max_len = 20): string =
+    proc checkNil(txt: string): string =
+        result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
+    proc anyText(root: XmlNode): string =
+        for child in root: 
+            try: 
+                let text = child.innerText.checkNil
+                if not text.startsWith("#content-main{display"): return text
+            except: discard
     try:
-        let 
-            client = newHttpClient(timeout = 15000)
-            doc    = client.getContent("http://" & url).parseHtml()
-            head   = doc.child("head")
-        if not head.isNil:
-            let title = head.child("title")
-            if not title.isNil: result = title.innerText
+        let html = newHttpClient(timeout = 15000).getContent("http://" & url)
+        result = if html.len > 15:
+            try:
+                let html = html.parseHtml
+                (try: html.findAll("title")[0].innerText.checkNil except: html.anyText.checkNil).substr(0, max_len)
+            except: ""
+        else: html
     except: discard
     if result != "": result = " (" & result & ")"
 
@@ -66,7 +74,7 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                     let log = open(finds_file, fmAppend)
                     log.writeLine url
                     log.close()
-                    let summary   = url.get_title()
+                    let summary   = url.get_summary()
                     output_lock.withLock:
                         if output.GetAttribute("VALUE") != "": output.SetAttribute "APPEND", "\n"
                         append_colored 248, 131, 121, url
