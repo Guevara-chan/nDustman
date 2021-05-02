@@ -43,6 +43,12 @@ proc get_title(url: string): string =
 
 # Fiber body.
 proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
+    template append_colored(r, g, b: int; text: string) =
+        let tag = User()
+        tag.SetAttribute("FGCOLOR", [r, g , b].mapIt($it).join(" "))
+        SetHandle("colorizer", tag)
+        output.SetAttribute "ADDFORMATTAG", "colorizer"
+        output.SetAttribute "APPEND", text
     let 
         client = newHttpClient(timeout = 5000)
         decor  = mask.split("*", 1)
@@ -60,20 +66,11 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                     let log = open(finds_file, fmAppend)
                     log.writeLine url
                     log.close()
-                    let 
-                        urltag    = User()
-                        sumtag    = User()
-                        summary   = url.get_title()
-                    urltag.SetAttribute("FGCOLOR", "248 131 121")
-                    sumtag.SetAttribute("FGCOLOR", "124 65 60")
-                    SetHandle("url", urltag)
-                    SetHandle("sum", sumtag)
+                    let summary   = url.get_title()
                     output_lock.withLock:
                         if output.GetAttribute("VALUE") != "": output.SetAttribute "APPEND", "\n"
-                        output.SetAttribute "ADDFORMATTAG", "url"
-                        output.SetAttribute "APPEND", url
-                        output.SetAttribute "ADDFORMATTAG", "sum"
-                        output.SetAttribute "APPEND", summary
+                        append_colored 248, 131, 121, url
+                        append_colored 124, 65, 60, summary                        
                     if autoopen.GetAttribute("VALUE") == "ON": openDefaultBrowser("http://" & url)
             except: discard
             statlock.withLock:
