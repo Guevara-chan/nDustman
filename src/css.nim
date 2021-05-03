@@ -6,7 +6,7 @@
 withPIhandle(dlg):
     "TITLE"         "nDustman v0.04"
     "MARGIN"        "5x5"
-    "SIZE"          "250x170"
+    "SIZE"          "265x170"
     "SHRINK"        "YES"
     "MINSIZE"       "368x250"
     "BGCOLOR"       "31 31 31"

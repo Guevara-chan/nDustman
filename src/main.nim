@@ -30,14 +30,15 @@ let
     mask     = "mask".cfget("www.*")
 
 # Content heurystics.
-proc get_summary(url: string, max_len = 20): string =
+proc get_summary(url: string, max_len = 25): string =
     proc checkNil(txt: string): string =
         result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
     proc anyText(root: XmlNode): string =
         for child in root: 
             try: 
                 let text = child.innerText.checkNil
-                if not text.startsWith("#content-main{display"): return text
+                if not text.startsWith("#content-main{display") and not text.startsWith("!function(e){function"):
+                    return text
             except: discard
     try:
         let html = newHttpClient(timeout = 15000).getContent("http://" & url)
@@ -47,14 +48,14 @@ proc get_summary(url: string, max_len = 20): string =
                 (try: html.findAll("title")[0].innerText.checkNil except: html.anyText.checkNil).substr(0, max_len)
             except: ""
         else: html
-    except: discard
+    except: return " / UNRESPONSIVE /"
     if result != "": result = " (" & result & ")"
 
 # Fiber body.
 proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
     template append_colored(r, g, b: int; text: string) =
         let tag = User()
-        tag.SetAttribute("FGCOLOR", [r, g , b].mapIt($it).join(" "))
+        tag.SetAttribute("FGCOLOR", [$r, $g , $b].join(" "))
         SetHandle("colorizer", tag)
         output.SetAttribute "ADDFORMATTAG", "colorizer"
         output.SetAttribute "APPEND", text
