@@ -13,4 +13,4 @@ __nDustman__ has been entirelly made for [Nim 1.4.0](https://nim-lang.org) with 
 Compilation can be achieved through automated build script provided as `release.nims`.
 
 # •Brief sampling of miscellaneous web junk•
-![image](https://user-images.githubusercontent.com/8768470/115868628-68083880-a445-11eb-9db8-64a86fdf8dba.png)
+![image](https://user-images.githubusercontent.com/8768470/116864050-e6b46100-ac0f-11eb-9664-87626b874fc3.png)
