@@ -23,11 +23,12 @@ proc cfget(key: string, def_val: string): string =
     cfg.setSectionKey "", key, result
 
 # Config parsing.
-let 
-    urlimit  = (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt)
-    domains  = "domains".cfget(".com .org .net").split(' ')
-    charpool = "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
-    mask     = "mask".cfget("www.*")
+let opt = (
+    urlimit:  (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt),
+    domains:  "domains".cfget(".com .org .net").split(' '),
+    charpool: "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate(),
+    mask:     "mask".cfget("www.*")
+)
 
 # Content heurystics.
 proc get_summary(url: string, max_len = 25): string =
@@ -155,9 +156,9 @@ niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
 
 # Fibers setup.
 cfg.writeConfig config_file
-for urlen in urlimit.min..urlimit.max:
-    for domain in domains:
-        spawn finder(urlen, mask, domain, charpool, area, brake_box, scan_stat, aopen_box)
+for urlen in opt.urlimit.min..opt.urlimit.max:
+    for domain in opt.domains:
+        spawn finder(urlen, opt.mask, domain, opt.charpool, area, brake_box, scan_stat, aopen_box)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER

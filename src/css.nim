@@ -82,8 +82,8 @@ withPIhandle(min_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         $(urlimit.min)
-    "SPINMAX"       $(urlimit.max)
+    "VALUE"         $(opt.urlimit.min)
+    "SPINMAX"       $(opt.urlimit.max)
 withPihandle(max_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x0"
@@ -95,8 +95,8 @@ withPIhandle(max_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         $(urlimit.max)
-    "SPINMIN"       $(urlimit.min)
+    "VALUE"         $(opt.urlimit.max)
+    "SPINMIN"       $(opt.urlimit.min)
 withPIhandle(minmaxer):
     "MARGIN"        "0x2"
 withPihandle(dom_hint):
@@ -108,7 +108,7 @@ withPIhandle(dom_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/./w+ )*(/./w+ ?)"
     "NOHIDESEL"     "NO"
-    "VALUE"         domains.join(" ")
+    "VALUE"         opt.domains.join(" ")
 withPIhandle(domainer):
     "MARGIN"        "0x1"
 withPihandle(mask_hint):
@@ -120,7 +120,7 @@ withPIhandle(mask_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/.|/-)*/*(/w|/./-)*"
     "NOHIDESEL"     "NO"
-    "VALUE"         mask
+    "VALUE"         opt.mask
 withPIhandle(masker):
     "MARGIN"        "0x1"
 withPihandle(pool_hint):
@@ -132,7 +132,7 @@ withPIhandle(pool_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/-)+"
     "NOHIDESEL"     "NO"
-    "VALUE"         charpool.join("")
+    "VALUE"         opt.charpool.join("")
 withPIhandle(pooler):
     "MARGIN"        "0x1"
 withPIhandle(fnd_link):
