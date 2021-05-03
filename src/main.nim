@@ -135,7 +135,7 @@ niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let url = "http://" & ih.GetAttribute("LINEVALUE").`$`.split(' ')[0]
     if url.len > 0 : link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
-    let url = area.GetAttribute("VALUE").`$`.split('\n').sample()
+    let url = area.GetAttribute("VALUE").`$`.split('\n').sample().split(' ')[0]
     if url.len > 0: openDefaultBrowser("http://" & url)
 niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     for feed in @[("min_url", min_spin), ("max_url", max_spin), ("domains", dom_ibox), ("char_pool", pool_ibox), 
