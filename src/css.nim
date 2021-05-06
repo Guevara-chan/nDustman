@@ -68,7 +68,7 @@ withPIhandle(aopen_txt):
     "PADDING"       "2x0"
 withPIhandle(aopen_box):
     "RIGHTBUTTON"   "YES"
-    "VALUE"         @["OFF", "ON"]["auto_open".cfget("0").parseInt.bool.int]
+    "VALUE"         @["OFF", "ON"][cfg.parse("auto_open", "0").parseInt.bool.int]
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPihandle(min_hint):
@@ -82,8 +82,8 @@ withPIhandle(min_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         $(opt.urlimit.min)
-    "SPINMAX"       $(opt.urlimit.max)
+    "VALUE"         $(cfg.urlimit.min)
+    "SPINMAX"       $(cfg.urlimit.max)
 withPihandle(max_hint):
     "FGCOLOR"       "248 248 255"
     "PADDING"       "2x0"
@@ -95,8 +95,8 @@ withPIhandle(max_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         $(opt.urlimit.max)
-    "SPINMIN"       $(opt.urlimit.min)
+    "VALUE"         $(cfg.urlimit.max)
+    "SPINMIN"       $(cfg.urlimit.min)
 withPIhandle(minmaxer):
     "MARGIN"        "0x2"
 withPihandle(dom_hint):
@@ -108,7 +108,7 @@ withPIhandle(dom_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/./w+ )*(/./w+ ?)"
     "NOHIDESEL"     "NO"
-    "VALUE"         opt.domains.join(" ")
+    "VALUE"         cfg.domains.join(" ")
 withPIhandle(domainer):
     "MARGIN"        "0x1"
 withPihandle(mask_hint):
@@ -120,7 +120,7 @@ withPIhandle(mask_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/.|/-)*/*(/w|/./-)*"
     "NOHIDESEL"     "NO"
-    "VALUE"         opt.mask
+    "VALUE"         cfg.mask
 withPIhandle(masker):
     "MARGIN"        "0x1"
 withPihandle(pool_hint):
@@ -132,7 +132,7 @@ withPIhandle(pool_ibox):
     "EXPAND"        "HORIZONTAL"
     "MASK"          "(/w|/-)+"
     "NOHIDESEL"     "NO"
-    "VALUE"         opt.charpool.join("")
+    "VALUE"         cfg.charpool.join("")
 withPIhandle(pooler):
     "MARGIN"        "0x1"
 withPIhandle(fnd_link):

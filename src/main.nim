@@ -5,30 +5,44 @@
 import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
 import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree  # Actual.
 
+# Config type.
+when not defined(Options):
+    type Options = ref object
+        urlimit:  tuple[min, max: int]
+        domains:  seq[string]
+        charpool: seq[char]
+        mask:     string
+        cfg:      Config
+        filename, path: string
+
+    proc parse(self: Options, key, def_val: string): string =
+        result = self.cfg.getSectionValue("", key, def_val)
+        self.cfg.setSectionKey "", key, result
+
+    template save(self: Options) =
+        self.cfg.writeConfig self.path
+
+    template update(self: Options, key, value: string) =
+        self.cfg.setSectionKey "", key, value
+
+    proc newOptions(file = "config.ini"): Options =
+        result          = Options(filename: file, path: file.absolutePath())
+        var self = result
+        self.path.open(fmAppend).close()
+        self.cfg      = result.path.loadConfig()
+        self.urlimit  = (min: self.parse("min_url", "5").parseInt, max: self.parse("max_url", "6").parseInt)
+        self.domains  = self.parse("domains",  ".com .org .net").split(' ')
+        self.charpool = self.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
+        self.mask     = self.parse("mask", "www.*")
+
 # Basic init.
 randomize()
 getAppDir().setCurrentDir()
-const 
-    config_file = "config.ini"
-    finds_file  = "finds.txt"
-config_file.open(fmAppend).close()
+const finds_file  = "finds.txt"
 var 
-    cfg = config_file.loadConfig()
+    cfg = newOptions()
     stat_lock, output_lock: Lock
 stat_lock.initLock(); output_lock.initLock()
-
-# Aux configuration proc.
-proc cfget(key: string, def_val: string): string =
-    result = cfg.getSectionValue("", key, def_val)
-    cfg.setSectionKey "", key, result
-
-# Config parsing.
-let opt = (
-    urlimit:  (min: "min_url".cfget("5").parseInt, max: "max_url".cfget("6").parseInt),
-    domains:  "domains".cfget(".com .org .net").split(' '),
-    charpool: "char_pool".cfget({'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate(),
-    mask:     "mask".cfget("www.*")
-)
 
 # Content heurystics.
 proc get_summary(url: string, max_len = 25): string =
@@ -120,7 +134,7 @@ let
     pool_hint = Label("Character pool:")
     pool_ibox = Text(nil)
     pooler    = HBox(pool_hint, pool_ibox, nil)
-    cfg_link  = Link(config_file.absolutePath, config_file)
+    cfg_link  = Link(cfg.path, cfg.filename)
     cfg_span  = Label("")
     apply_btn = FlatButton("APPLY CONFIG")
     fnd_link  = Link(finds_file.absolutePath, finds_file)
@@ -140,13 +154,13 @@ niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
 niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     for feed in @[("min_url", min_spin), ("max_url", max_spin), ("domains", dom_ibox), ("char_pool", pool_ibox), 
     ("mask", mask_ibox)]:
-        cfg.setSectionKey "", feed[0], feed[1].GetAttribute("VALUE").`$`.strip()
-    cfg.writeConfig config_file
+        cfg.update feed[0], feed[1].GetAttribute("VALUE").`$`.strip()
+    cfg.save()
     discard getAppFilename().startProcess()
     quit()
 niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
-    cfg.setSectionKey "", "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
-    cfg.writeConfig config_file
+    cfg.update "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
+    cfg.save()
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
     output_lock.withLock: area.SetAttribute "VALUE", ""
 niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} = 
@@ -155,10 +169,10 @@ niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
     min_spin.SetAttribute "SPINMAX", ih.GetAttribute("VALUE")
 
 # Fibers setup.
-cfg.writeConfig config_file
-for urlen in opt.urlimit.min..opt.urlimit.max:
-    for domain in opt.domains:
-        spawn finder(urlen, opt.mask, domain, opt.charpool, area, brake_box, scan_stat, aopen_box)
+cfg.save()
+for urlen in cfg.urlimit.min..cfg.urlimit.max:
+    for domain in cfg.domains:
+        spawn finder(urlen, cfg.mask, domain, cfg.charpool, area, brake_box, scan_stat, aopen_box)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER
