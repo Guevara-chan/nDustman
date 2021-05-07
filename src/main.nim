@@ -26,7 +26,7 @@ when not defined(Options):
         self.cfg.writeConfig self.path
 
     proc newOptions(file = "config.ini"): Options =
-        result        = Options(filename: file, path: file.absolutePath())        
+        result       = Options(filename: file, path: file.absolutePath())        
         result.path.open(fmAppend).close()
         with result:
             cfg      = result.path.loadConfig()
