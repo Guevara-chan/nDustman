@@ -3,7 +3,7 @@
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
-import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree  # Actual.
+import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree, std/with  # Actual.
 
 # Config type.
 when not defined(Options):
@@ -19,21 +19,21 @@ when not defined(Options):
         result = self.cfg.getSectionValue("", key, def_val)
         self.cfg.setSectionKey "", key, result
 
-    template save(self: Options) =
-        self.cfg.writeConfig self.path
-
     template update(self: Options, key, value: string) =
         self.cfg.setSectionKey "", key, value
 
+    template save(self: Options) =
+        self.cfg.writeConfig self.path
+
     proc newOptions(file = "config.ini"): Options =
-        result          = Options(filename: file, path: file.absolutePath())
-        var self = result
-        self.path.open(fmAppend).close()
-        self.cfg      = result.path.loadConfig()
-        self.urlimit  = (min: self.parse("min_url", "5").parseInt, max: self.parse("max_url", "6").parseInt)
-        self.domains  = self.parse("domains",  ".com .org .net").split(' ')
-        self.charpool = self.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
-        self.mask     = self.parse("mask", "www.*")
+        result        = Options(filename: file, path: file.absolutePath())        
+        result.path.open(fmAppend).close()
+        with result:
+            cfg      = result.path.loadConfig()
+            urlimit  = (min: result.parse("min_url", "5").parseInt, max: result.parse("max_url", "6").parseInt)
+            domains  = result.parse("domains",  ".com .org .net").split(' ')
+            charpool = result.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
+            mask     = result.parse("mask", "www.*")
 
 # Basic init.
 randomize()
