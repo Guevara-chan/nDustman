@@ -45,7 +45,7 @@ var
 stat_lock.initLock(); output_lock.initLock()
 
 # Content heurystics.
-proc get_summary(url: string, max_len = 25): string =
+proc get_summary(url: string, max_len: int): string =
     proc checkNil(txt: string): string =
         result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
     proc anyText(root: XmlNode): string =
@@ -68,7 +68,7 @@ proc get_summary(url: string, max_len = 25): string =
     if result != "": result = " (" & result & ")"
 
 # Fiber body.
-proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen: PIhandle) =
+proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen, sumlen: PIhandle) =
     template append_colored(r, g, b: int; text: string) =
         let tag = User()
         tag.SetAttribute("FGCOLOR", [$r, $g , $b].join(" "))
@@ -89,7 +89,9 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                 discard url.getAddrInfo(Port 80, AfUnspec)
                 if client.head("http://" & url).status == "200 OK":              
                     success = 1
-                    let summary = url.get_summary()
+                    let 
+                        max_sum = sumlen.GetAttribute("VALUE").`$`.parseInt
+                        summary = (if maxsum > 0: url.get_summary(max_sum) else: "")
                     let log = open(finds_file, fmAppend)
                     log.writeLine url & summary
                     log.close()                    
@@ -117,8 +119,8 @@ let
     framer    = Vbox(area, nil)
     brake_box = Toggle("", "SWITCH")
     brake_txt = Label("Scan new links")
-    aopen_box = Toggle("", "SWITCH")
     aopen_txt = Label("Auto-open finds")
+    aopen_box = Toggle("", "SWITCH")
     scan_stat = Label("Creating fibers...")
     middler   = Hbox(brake_box, brake_txt, scan_stat, aopen_txt, aopen_box, nil)
     min_hint  = Label("Min URL length:")
@@ -135,13 +137,18 @@ let
     pool_hint = Label("Character pool:")
     pool_ibox = Text(nil)
     pooler    = HBox(pool_hint, pool_ibox, nil)
+    sum_hint  = Label("Link summary limit:")
+    sum_spin  = Text(nil)
+    anote_txt = Label("Annotate links in " & finds_file)
+    anote_box = Toggle("", "SWITCH")
+    summator  = HBox(sum_hint, sum_spin, anote_txt, anote_box, nil)
     cfg_link  = Link(cfg.path, cfg.filename)
     cfg_span  = Label("")
     apply_btn = FlatButton("APPLY CONFIG")
     fnd_link  = Link(finds_file.absolutePath, finds_file)
     fnd_span  = Label("")
     footer    = Hbox(fnd_link, fnd_span, apply_btn, cfg_span, cfg_link, nil)
-    liner     = Vbox(header, Frame(framer), middler, minmaxer, domainer, masker, pooler, footer, nil)
+    liner     = Vbox(header, Frame(framer), middler, minmaxer, domainer, masker, pooler, summator, footer, nil)
     dlg       = Dialog(liner)
 include        "./css.nim"
 
@@ -176,7 +183,7 @@ niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
 cfg.save()
 for urlen in cfg.urlimit.min..cfg.urlimit.max:
     for domain in cfg.domains:
-        spawn finder(urlen, cfg.mask, domain, cfg.charpool, area, brake_box, scan_stat, aopen_box)
+        spawn finder(urlen, cfg.mask, domain, cfg.charpool, area, brake_box, scan_stat, aopen_box, sum_spin)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER

@@ -6,9 +6,9 @@
 withPIhandle(dlg):
     "TITLE"         "nDustman v0.04"
     "MARGIN"        "5x5"
-    "SIZE"          "267x170"
+    "SIZE"          "270x190"
     "SHRINK"        "YES"
-    "MINSIZE"       "368x250"
+    "MINSIZE"       "370x270"
     "BGCOLOR"       "31 31 31"
 withPIhandle(header):
     "MARGIN"        "0x3"
@@ -135,6 +135,29 @@ withPIhandle(pool_ibox):
     "NOHIDESEL"     "NO"
     "VALUE"         cfg.charpool.join("")
 withPIhandle(pooler):
+    "MARGIN"        "0x1"
+withPihandle(sum_hint):
+    "FGCOLOR"       "248 248 255"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
+withPIhandle(sum_spin):
+    "SPIN"          "YES"
+    "READONLY"      "YES"
+    "SPINMIN"       "0"
+    "FGCOLOR"       "0 206 209"
+    "EXPAND"        "HORIZONTAL"
+    "NOHIDESEL"     "NO"
+    "VALUE"         "25"
+withPIhandle(anote_txt):
+    "FGCOLOR"       "248 248 255"
+    "ALIGNMENT"     "ARIGHT"
+    "PADDING"       "2x0"
+    "EXPAND"        "VERTICALFREE"
+withPIhandle(anote_box):
+    "RIGHTBUTTON"   "YES"
+    "VALUE"         "ON"
+    "EXPAND"        "VERTICALFREE"
+withPIhandle(summator):
     "MARGIN"        "0x1"
 withPIhandle(fnd_link):
     "ALIGNMENT"     "ALEFT:ABOTTOM"
