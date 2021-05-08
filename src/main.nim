@@ -60,7 +60,8 @@ proc get_summary(url: string, max_len = 25): string =
         result = if html.len > max_len:
             try:
                 let html = html.parseHtml
-                (try: html.findAll("title")[0].innerText.checkNil except: html.anyText.checkNil).substr(0, max_len)
+                (try: html.findAll("title")[0].innerText.checkNil except: html.anyText.checkNil)
+                    .strip().substr(0, max_len)
             except: ""
         else: html
     except: return " / UNRESPONSIVE /"
@@ -87,11 +88,11 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
             try:
                 discard url.getAddrInfo(Port 80, AfUnspec)
                 if client.head("http://" & url).status == "200 OK":              
-                    success = 1                    
+                    success = 1
+                    let summary = url.get_summary()
                     let log = open(finds_file, fmAppend)
-                    log.writeLine url
-                    log.close()
-                    let summary   = url.get_summary()
+                    log.writeLine url & summary
+                    log.close()                    
                     output_lock.withLock:
                         if output.GetAttribute("VALUE") != "": output.SetAttribute "APPEND", "\n"
                         append_colored 248, 131, 121, url
@@ -146,8 +147,10 @@ include        "./css.nim"
 
 # Callbacks setup & small stuff.
 niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
-    let url = "http://" & ih.GetAttribute("LINEVALUE").`$`.split(' ')[0]
-    if url.len > 0 : link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
+    let entry = ih.GetAttribute("LINEVALUE").`$`.split(' ', 1)
+    if entry.len > 0:
+        let url = "http://" & entry[0]
+        link.SetAttribute("TITLE", url); link.SetAttribute("URL", url); link.SetAttribute("TIP", entry[1][1..^3])
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample().split(' ')[0]
     if url.len > 0: openDefaultBrowser("http://" & url)
