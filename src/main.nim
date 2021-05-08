@@ -150,7 +150,8 @@ niup.SetCallback area, "CARET_CB", proc (ih: PIhandle): cint {.cdecl.} =
     let entry = ih.GetAttribute("LINEVALUE").`$`.split(' ', 1)
     if entry.len > 0:
         let url = "http://" & entry[0]
-        link.SetAttribute("TITLE", url); link.SetAttribute("URL", url); link.SetAttribute("TIP", entry[1][1..^3])
+        link.SetAttribute("TITLE", url); link.SetAttribute("URL", url)
+        if entry.len > 1: link.SetAttribute("TIP", entry[1][1..^3])
 niup.SetCallback rand_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     let url = area.GetAttribute("VALUE").`$`.split('\n').sample().split(' ')[0]
     if url.len > 0: openDefaultBrowser("http://" & url)

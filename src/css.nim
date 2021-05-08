@@ -38,6 +38,7 @@ withPIhandle(link):
     "EXPAND"        "HORIZONTAL"
     "ALIGNMENT"     "ACENTER"
     "PADDING"       "0x3"
+    "TIPFONT"       "SYSTEM"
 withPIhandle(framer):
     "MARGIN"        "2x2"
     "BGCOLOR"       "15 15 15"
