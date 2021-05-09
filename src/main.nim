@@ -178,7 +178,9 @@ niup.SetCallback min_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
     max_spin.SetAttribute "SPINMIN", ih.GetAttribute("VALUE")
 niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =
     min_spin.SetAttribute "SPINMAX", ih.GetAttribute("VALUE")
-
+niup.SetCallback sum_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =
+    cfg.update "sum_limit", ih.GetAttribute("VALUE").`$`
+    cfg.save()
 # Fibers setup.
 cfg.save()
 for urlen in cfg.urlimit.min..cfg.urlimit.max:

@@ -147,7 +147,7 @@ withPIhandle(sum_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         "25"
+    "VALUE"         cfg.parse("sum_limit", "25")
 withPIhandle(anote_txt):
     "FGCOLOR"       "248 248 255"
     "ALIGNMENT"     "ARIGHT"
