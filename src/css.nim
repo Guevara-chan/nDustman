@@ -69,7 +69,7 @@ withPIhandle(aopen_txt):
     "PADDING"       "2x0"
 withPIhandle(aopen_box):
     "RIGHTBUTTON"   "YES"
-    "VALUE"         @["OFF", "ON"][cfg.parse("auto_open", "0").parseInt.bool.int]
+    "VALUE"         ["OFF", "ON"][cfg.parse("auto_open", "0").parseInt.bool.int]
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPihandle(min_hint):
@@ -155,7 +155,7 @@ withPIhandle(anote_txt):
     "EXPAND"        "VERTICALFREE"
 withPIhandle(anote_box):
     "RIGHTBUTTON"   "YES"
-    "VALUE"         "ON"
+    "VALUE"         ["OFF", "ON"][cfg.parse("annotate_finds", "1").parseInt.bool.int]
     "EXPAND"        "VERTICALFREE"
 withPIhandle(summator):
     "MARGIN"        "0x1"
