@@ -68,7 +68,7 @@ proc get_summary(url: string, max_len: int): string =
     if result != "": result = " (" & result & ")"
 
 # Fiber body.
-proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor, stats, autoopen, sumlen: PIhandle) =
+proc finder(urlen: int; mask, domain: string; pool: seq[char]; output,supressor,stats,autoopen,sumlen,anote: PIhandle) =
     template append_colored(r, g, b: int; text: string) =
         let tag = User()
         tag.SetAttribute("FGCOLOR", [$r, $g , $b].join(" "))
@@ -93,7 +93,7 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output, supressor
                         max_sum = sumlen.GetAttribute("VALUE").`$`.parseInt
                         summary = (if maxsum > 0: url.get_summary(max_sum) else: "")
                     let log = open(finds_file, fmAppend)
-                    log.writeLine url & summary
+                    log.writeLine url & (if anote.GetAttribute("VALUE") == "ON": summary else: "")
                     log.close()                    
                     output_lock.withLock:
                         if output.GetAttribute("VALUE") != "": output.SetAttribute "APPEND", "\n"
@@ -170,7 +170,10 @@ niup.SetCallback apply_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} =
     discard getAppFilename().startProcess()
     quit()
 niup.SetCallback aopen_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
-    cfg.update "auto_open", (aopen_box.GetAttribute("VALUE") == "ON").int.`$`
+    cfg.update "auto_open", (ih.GetAttribute("VALUE") == "ON").int.`$`
+    cfg.save()
+niup.SetCallback anote_box, "ACTION", proc (ih: PIhandle): cint {.cdecl.} =
+    cfg.update "annotate_finds", (ih.GetAttribute("VALUE") == "ON").int.`$`
     cfg.save()
 niup.SetCallback clear_btn, "FLAT_ACTION", proc (ih: PIhandle): cint {.cdecl.} = 
     output_lock.withLock: area.SetAttribute "VALUE", ""
@@ -181,11 +184,12 @@ niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
 niup.SetCallback sum_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.update "sum_limit", ih.GetAttribute("VALUE").`$`
     cfg.save()
+
 # Fibers setup.
 cfg.save()
 for urlen in cfg.urlimit.min..cfg.urlimit.max:
     for domain in cfg.domains:
-        spawn finder(urlen, cfg.mask, domain, cfg.charpool, area, brake_box, scan_stat, aopen_box, sum_spin)
+        spawn finder(urlen, cfg.mask, domain, cfg.charpool, area, brake_box, scan_stat, aopen_box, sum_spin, anote_box)
 
 # Finalization.
 ShowXY dlg, IUP_CENTER, IUP_CENTER
