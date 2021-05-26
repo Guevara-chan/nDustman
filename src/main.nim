@@ -110,6 +110,7 @@ proc finder(urlen: int; mask, domain: string; pool: seq[char]; output,supressor,
 
 # UI code.
 Open()
+SetGlobal("UTF8MODE", "YES")
 let 
     area      = Text(nil)
     link      = Link("https://vk.com/guevara_chan", "Developed in 2021 by Guevara-chan") 
