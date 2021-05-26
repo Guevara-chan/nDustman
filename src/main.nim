@@ -185,6 +185,13 @@ niup.SetCallback max_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.
 niup.SetCallback sum_spin, "VALUECHANGED_CB", proc (ih: PIhandle): cint {.cdecl.} =
     cfg.update "sum_limit", ih.GetAttribute("VALUE").`$`
     cfg.save()
+let area_click_cb = proc(ih: PIhandle; btn, pressed, x ,y: int32; status: char) =
+    if btn == IUP_BUTTON3.int32 and pressed == 0:
+        var lin, col: int32
+        ih.TextConvertPosToLinCol(ih.ConvertXYToPos(x, y), lin, col)
+        let lines = ih.GetAttribute("VALUE").`$`.split('\n')
+        if lin <= lines.len: openDefaultBrowser("http://" & lines[lin-1].split(' ')[0])
+SetCallback area, "BUTTON_CB", area_click_cb
 
 # Fibers setup.
 cfg.save()
