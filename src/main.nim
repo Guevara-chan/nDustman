@@ -190,7 +190,10 @@ let area_click_cb = proc(ih: PIhandle; btn, pressed, x ,y: int32; status: char) 
         var lin, col: int32
         ih.TextConvertPosToLinCol(ih.ConvertXYToPos(x, y), lin, col)
         let lines = ih.GetAttribute("VALUE").`$`.split('\n')
-        if lin <= lines.len: openDefaultBrowser("http://" & lines[lin-1].split(' ')[0])
+        if lin <= lines.len: 
+            let urlpart = lines[lin-1].split(' ')[0]
+            openDefaultBrowser("http://" & urlpart)
+            ih.SetAttribute "CARET", $lin & "," & $(urlpart.len + 1)
 SetCallback area, "BUTTON_CB", area_click_cb
 
 # Fibers setup.
