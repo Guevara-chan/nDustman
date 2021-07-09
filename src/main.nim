@@ -15,12 +15,20 @@ when not defined(Options):
         cfg:      Config
         filename, path: string
 
-    proc parse(self: Options, key, def_val: string): string =
-        result = self.cfg.getSectionValue("", key, def_val)
-        self.cfg.setSectionKey "", key, result
-
     template update(self: Options, key, value: string) =
         self.cfg.setSectionKey "", key, value
+
+    proc parse(self: Options, key, def_val: string): string =
+        result = self.cfg.getSectionValue("", key, def_val)
+        self.update(key, result)
+
+    func contain(val: int, min = low(int), max = high(int)): int = 
+        result = val
+        if result < min:   return min
+        elif result > max: return max
+
+    proc parse(self: Options, key: string, def_val: int, min = low(int), max = high(int)): int =
+        result = (try: self.parse(key, $def_val).parseInt except: def_val).contain(min, max)
 
     template save(self: Options) =
         self.cfg.writeConfig self.path
@@ -30,10 +38,11 @@ when not defined(Options):
         result.path.open(fmAppend).close()
         with result:
             cfg      = result.path.loadConfig()
-            urlimit  = (min: result.parse("min_url", "5").parseInt, max: result.parse("max_url", "6").parseInt)
+            urlimit  = (min: result.parse("min_url", 5, 1), max: result.parse("max_url", 6, 1))
             domains  = result.parse("domains",  ".com .org .net").split(' ')
             charpool = result.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
             mask     = result.parse("mask", "www.*")
+            urlimit  = (min: result.urlimit.min, max: result.urlimit.max.contain(result.urlimit.min))
 
 # Basic init.
 randomize()
