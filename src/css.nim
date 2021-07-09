@@ -69,7 +69,7 @@ withPIhandle(aopen_txt):
     "PADDING"       "2x0"
 withPIhandle(aopen_box):
     "RIGHTBUTTON"   "YES"
-    "VALUE"         ["OFF", "ON"][cfg.parse("auto_open", 0, 0, 1).bool.int]
+    "VALUE"         ["OFF", "ON"][cfg.parse("auto_open", false).int]
 withPIhandle(middler):
     "MARGIN"        "0x2"
 withPihandle(min_hint):
@@ -146,7 +146,7 @@ withPIhandle(sum_spin):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
     "NOHIDESEL"     "NO"
-    "VALUE"         cfg.parse("sum_limit", 25, 0)
+    "VALUE"         cfg.parse("sum_limit", 25, 0).`$`
 withPIhandle(anote_txt):
     "FGCOLOR"       "248 248 255"
     "ALIGNMENT"     "ARIGHT"
@@ -154,7 +154,7 @@ withPIhandle(anote_txt):
     "EXPAND"        "VERTICALFREE"
 withPIhandle(anote_box):
     "RIGHTBUTTON"   "YES"
-    "VALUE"         ["OFF", "ON"][cfg.parse("annotate_finds", 1, 0, 1).bool.int]
+    "VALUE"         ["OFF", "ON"][cfg.parse("annotate_finds", true).int]
     "EXPAND"        "VERTICALFREE"
 withPIhandle(summator):
     "MARGIN"        "0x1"

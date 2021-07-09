@@ -30,6 +30,9 @@ when not defined(Options):
     proc parse(self: Options, key: string, def_val: int, min = low(int), max = high(int)): int =
         result = (try: self.parse(key, $def_val).parseInt except: def_val).contain(min, max)
 
+    template parse(self: Options, key: string, def_val: bool): bool =
+        self.parse(key, def_val.int, 0, 1).bool
+
     template save(self: Options) =
         self.cfg.writeConfig self.path
 
