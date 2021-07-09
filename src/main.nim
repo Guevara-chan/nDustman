@@ -21,14 +21,11 @@ when not defined(Options):
     proc parse(self: Options, key, def_val: string): string =
         result = self.cfg.getSectionValue("", key, def_val)
         self.update(key, result)
-
-    func contain(val: int, min = low(int), max = high(int)): int = 
-        result = val
-        if result < min:   return min
-        elif result > max: return max
-
+     
     proc parse(self: Options, key: string, def_val: int, min = low(int), max = high(int)): int =
-        result = (try: self.parse(key, $def_val).parseInt except: def_val).contain(min, max)
+        result = (try: self.parse(key, $def_val).parseInt except: def_val)
+        result = (if result < min: min elif result > max: max else: result)
+        self.update(key, $result)
 
     template parse(self: Options, key: string, def_val: bool): bool =
         self.parse(key, def_val.int, 0, 1).bool
@@ -41,11 +38,11 @@ when not defined(Options):
         result.path.open(fmAppend).close()
         with result:
             cfg      = result.path.loadConfig()
-            urlimit  = (min: result.parse("min_url", 5, 1), max: result.parse("max_url", 6, 1))
+            urlimit  = (min: result.parse("min_url", 5, 1), max: 0)
+            urlimit  = (min: result.urlimit.min, max: result.parse("max_url", 6, result.urlimit.min))
             domains  = result.parse("domains",  ".com .org .net").split(' ')
             charpool = result.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
             mask     = result.parse("mask", "www.*")
-            urlimit  = (min: result.urlimit.min, max: result.urlimit.max.contain(result.urlimit.min))
 
 # Basic init.
 randomize()
