@@ -3,7 +3,7 @@
 # Developed in 2021 by Victoria A. Guevara  #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
 import random, nativesockets, threadpool, parsecfg, strutils, sequtils # (terminal) legacy
-import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree, std/with  # Actual.
+import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltree, re, std/with  # Actual.
 
 # Config type.
 when not defined(Options):
@@ -14,12 +14,18 @@ when not defined(Options):
         mask:     string
         cfg:      Config
         filename, path: string
+        re:       tuple[domains, charpool, mask: string]
 
     template update(self: Options, key, value: string) =
         self.cfg.setSectionKey "", key, value
 
     proc parse(self: Options, key, def_val: string): string =
         result = self.cfg.getSectionValue("", key, def_val)
+        self.update(key, result)
+
+    proc parse(self: Options, key, def_val, pattern: string): string =
+        result = self.parse(key, def_val)
+        if result.matchLen(re(pattern)) != result.len: result = def_val 
         self.update(key, result)
      
     proc parse(self: Options, key: string, def_val: int, min = low(int), max = high(int)): int =
@@ -37,12 +43,14 @@ when not defined(Options):
         result       = Options(filename: file, path: file.absolutePath())        
         result.path.open(fmAppend).close()
         with result:
+            re       = (r"(\.\w+ )*(\.\w+ ?)", r"(\w|\-)+", r"(\w|\.|\-)*\*(\w|\.\-)*")
             cfg      = result.path.loadConfig()
             urlimit  = (min: result.parse("min_url", 5, 1), max: 0)
             urlimit  = (min: result.urlimit.min, max: result.parse("max_url", 6, result.urlimit.min))
-            domains  = result.parse("domains",  ".com .org .net").split(' ')
-            charpool = result.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join("")).toLower().toSeq().deduplicate()
-            mask     = result.parse("mask", "www.*")
+            domains  = result.parse("domains",  ".com .org .net", result.re.domains).split(' ')
+            mask     = result.parse("mask", "www.*", result.re.mask)
+            charpool = result.parse("char_pool", {'a'..'z', '0'..'9'}.toSeq().join(""), result.re.charpool)
+                .toLower().toSeq().deduplicate()
 
 # Basic init.
 randomize()

@@ -106,7 +106,7 @@ withPihandle(dom_hint):
 withPIhandle(dom_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
-    "MASK"          "(/./w+ )*(/./w+ ?)"
+    "MASK"          cfg.re.domains.replace('\\', '/')
     "NOHIDESEL"     "NO"
     "VALUE"         cfg.domains.join(" ")
 withPIhandle(domainer):
@@ -118,7 +118,7 @@ withPihandle(mask_hint):
 withPIhandle(mask_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
-    "MASK"          "(/w|/.|/-)*/*(/w|/./-)*"
+    "MASK"          cfg.re.mask.replace('\\', '/')
     "NOHIDESEL"     "NO"
     "VALUE"         cfg.mask
 withPIhandle(masker):
@@ -130,7 +130,7 @@ withPihandle(pool_hint):
 withPIhandle(pool_ibox):
     "FGCOLOR"       "0 206 209"
     "EXPAND"        "HORIZONTAL"
-    "MASK"          "(/w|/-)+"
+    "MASK"          cfg.re.charpool.replace('\\', '/')
     "NOHIDESEL"     "NO"
     "VALUE"         cfg.charpool.join("")
 withPIhandle(pooler):
