@@ -62,10 +62,9 @@ var
 stat_lock.initLock(); output_lock.initLock()
 
 # Content heurystics.
-echo Whitespace+{'\n'}
 proc get_summary(url: string, max_len: int): string =
     proc checkNil(txt: string): string =
-        result = txt.strip(chars = Whitespace+{'\n'}); if result == "": raise newException(ValueError, "I Am Error")
+        result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
     proc anyText(root: XmlNode): string =
         for child in root: 
             try: 
