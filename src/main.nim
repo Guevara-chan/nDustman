@@ -8,13 +8,13 @@ import locks, browsers, os, osproc, httpclient, niup, niupext, htmlparser, xmltr
 # Config type.
 when not defined(Options):
     type Options = ref object
+        re:       tuple[domains, charpool, mask: string]
         urlimit:  tuple[min, max: int]
         domains:  seq[string]
         charpool: seq[char]
         mask:     string
         cfg:      Config
         filename, path: string
-        re:       tuple[domains, charpool, mask: string]
 
     template update(self: Options, key, value: string) =
         self.cfg.setSectionKey "", key, value
@@ -62,9 +62,10 @@ var
 stat_lock.initLock(); output_lock.initLock()
 
 # Content heurystics.
+echo Whitespace+{'\n'}
 proc get_summary(url: string, max_len: int): string =
     proc checkNil(txt: string): string =
-        result = txt.replace('\n', ' ').strip(); if result == "": raise newException(ValueError, "I Am Error")
+        result = txt.strip(chars = Whitespace+{'\n'}); if result == "": raise newException(ValueError, "I Am Error")
     proc anyText(root: XmlNode): string =
         for child in root: 
             try: 
